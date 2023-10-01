@@ -31,8 +31,9 @@ std::vector<std::string> NaiveSearchParallel::searchWordSingleVector(const std::
 
     for( int i = 0; i < _nbThreads; ++i )
     {
-        StringVecConstIterator startIt = std::begin(_wordList) + i * (_wordList.size() / _nbThreads);
-        StringVecConstIterator endIt = std::begin(_wordList) + ((i+1) * (_wordList.size() / _nbThreads));
+        int step = (_wordList.size() / _nbThreads); //add check if step = 0;
+        StringVecConstIterator startIt = std::begin(_wordList) + i * step;
+        StringVecConstIterator endIt =(i == _nbThreads -1 ) ? _wordList.end() : (startIt + step);
 
         std::function<void(void)> func = std::bind(&NaiveSearchParallel::runSearchWordSingleVector, this, subStr, startIt, endIt);
         _threadPool.runThread(func);

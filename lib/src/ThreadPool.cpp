@@ -1,10 +1,10 @@
 #include "ThreadPool.h"
 
 ThreadPool::ThreadPool(unsigned nbThreads)
-    :   _idx(0)
+    : _idx(0)
 {
     unsigned maxThreads = std::thread::hardware_concurrency();
-    if (nbThreads > maxThreads) {
+    if (nbThreads == 0 || nbThreads > maxThreads) {
         throw std::runtime_error("Maximum number of threads (" + std::to_string(maxThreads) + ") exceeded.");
     }
     else {
