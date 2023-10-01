@@ -2,7 +2,6 @@
 #define NAIVESEARCHPARALLEL_H
 
 #include "NaiveSearch.h"
-#include "SpinLock.h"
 #include "ThreadPool.h"
 #include <mutex>
 

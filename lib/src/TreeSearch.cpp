@@ -1,9 +1,10 @@
 #include "TreeSearch.h"
 
+#include <algorithm>
 #include <fstream>
 
-TreeSearch::TreeSearch(unsigned int nbChar)
-    : _nbChar(nbChar)
+TreeSearch::TreeSearch(bool compactTree)
+    : _compactTree(compactTree)
 {
     _searchTree = std::make_unique<TreeNode>();
 }
@@ -18,7 +19,7 @@ bool TreeSearch::loadWordList(const std::string &wordListPath)
     std::string word;
     while( std::getline(iFile, word, '\n') )
     {
-        addWordToTree(word, _nbChar, _searchTree, 0);
+        addWordToTree(word, _searchTree, 0);
     }
     return true;
 }
@@ -32,21 +33,19 @@ std::vector<std::string> TreeSearch::searchWord(const std::string &subStr)
     }
 
     // TODO: add checks
-    std::vector<std::unique_ptr<TreeNode>>::iterator treeIt = _searchTree->_nextLetters.begin() + (subStr[0] - 'A');
-    // Optimize for 1, 2 letters
-    for( int i = 1; i < subStr.size(); ++i )
+    if (_compactTree)
     {
-        char letter = subStr[i];
-        treeIt = (*treeIt)->_nextLetters.begin() + (letter - 'A');
+        searchWordCompact(subStr, _searchTree, foundWords);
+    }
+    else {
+        searchWordRandomAccess(subStr, _searchTree, foundWords);
     }
 
-    if( (*treeIt) ) {
-        searchWordRec(subStr, (*treeIt), foundWords);
-    }
+
     return foundWords;
 }
 
-void TreeSearch::searchWordRec(const std::string &subStr, std::unique_ptr<TreeNode>& treeNode, std::vector<std::string>& foundWords)
+void TreeSearch::searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode>& treeNode, std::vector<std::string>& foundWords)
 {
     if( treeNode->_nextLetters.empty() ) // Is leaf
     {
@@ -54,15 +53,33 @@ void TreeSearch::searchWordRec(const std::string &subStr, std::unique_ptr<TreeNo
     }
     else {
         for( int i = 0; i < treeNode->_nextLetters.size(); ++i ) {
-            searchWordRec(subStr, treeNode->_nextLetters[i], foundWords);
+            if( treeNode->_nextLetters[i] ) {
+                searchWordRec(subStr, treeNode->_nextLetters[i], foundWords);
+            }
         }
     }
 }
 
-void TreeSearch::addWordToTree(const std::string &word, unsigned nbChar, std::unique_ptr<TreeNode>& treeNode, int  letterIdx)
+std::vector<std::unique_ptr<TreeSearch::TreeNode>>::iterator TreeSearch::findLetter(const std::unique_ptr<TreeNode>& treeNode, const char &letter)
 {
-    const char letter = word[letterIdx];
-    int l = letter - 'A';
+    auto compFunc = [&](const std::unique_ptr<TreeNode>& node) { return (node->_letter == letter); };
+    auto it = std::find_if(std::begin(treeNode->_nextLetters), std::end(treeNode->_nextLetters), compFunc);
+    return it;
+}
+
+
+void TreeSearch::addWordToTree(const std::string &word, const std::unique_ptr<TreeNode>& treeNode, int letterIdx)
+{
+    if( _compactTree ) {
+        addWordToTreeCompact(word, treeNode, letterIdx);
+    }
+    else {
+        addWordToTreeRandomAccess(word, treeNode, letterIdx);
+    }
+}
+void TreeSearch::addWordToTreeRandomAccess(const std::string &word, const std::unique_ptr<TreeNode>& treeNode, int letterIdx)
+{
+    const char l = word[letterIdx];
 
     if( letterIdx == word.size() ) { // Leaf
         treeNode->_word = word;
@@ -70,12 +87,74 @@ void TreeSearch::addWordToTree(const std::string &word, unsigned nbChar, std::un
     }
 
     if( treeNode->_nextLetters.empty() ) {
-        treeNode->_nextLetters.resize(nbChar);
+        treeNode->_nextLetters.resize(UCHAR_MAX+1);
 
     }
     if( !treeNode->_nextLetters[l] ) {
-        treeNode->_nextLetters[l] = std::make_unique<TreeNode>(letter);
+        treeNode->_nextLetters[l] = std::make_unique<TreeNode>(l);
     }
-    addWordToTree(word, nbChar, treeNode->_nextLetters[l], letterIdx+1);
+    addWordToTree(word, treeNode->_nextLetters[l], letterIdx+1);
 
 }
+
+void TreeSearch::searchWordRandomAccess(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+{
+    if( !treeNode || subStr.empty() ) {
+        return;
+    }
+
+    std::vector<std::unique_ptr<TreeNode>>::iterator treeIt = _searchTree->_nextLetters.begin() + subStr[0];
+
+    for( int i = 1; i < subStr.size() && (*treeIt); ++i )
+    {
+        char letter = subStr[i];
+        treeIt = (*treeIt)->_nextLetters.begin() + letter;
+    }
+
+    if( (*treeIt) ) {
+        searchWordRec(subStr, (*treeIt), foundWords);
+    }
+}
+
+void TreeSearch::addWordToTreeCompact(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx)
+{
+    const char l = word[letterIdx];
+
+    if( letterIdx == word.size() ) { // Leaf
+        treeNode->_word = word;
+        return;
+    }
+
+    auto it = findLetter(treeNode, l);
+    if( it == treeNode->_nextLetters.end() ) {
+        treeNode->_nextLetters.push_back(std::make_unique<TreeNode>(l));
+        addWordToTree(word, treeNode->_nextLetters.back(), letterIdx+1);
+    }
+    else {
+        addWordToTree(word, (*it), letterIdx+1);
+    }
+}
+
+void TreeSearch::searchWordCompact(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+{
+    if( !treeNode || subStr.empty() ) {
+        return;
+    }
+
+    std::vector<std::unique_ptr<TreeNode>>::iterator treeIt = findLetter(_searchTree, subStr[0]);
+
+    if( treeIt == _searchTree->_nextLetters.end()) {
+        return;
+    }
+
+    for( int i = 1; i < subStr.size(); ++i )
+    {
+        char letter = subStr[i];
+        treeIt = findLetter((*treeIt), letter);
+    }
+
+    if( (*treeIt) ) {
+        searchWordRec(subStr, (*treeIt), foundWords);
+    }
+}
+

@@ -27,9 +27,7 @@ add_library(SearchAlgoLib SHARED ${SOURCES} ${HEADERS})
 
 
 # Main apps
-add_executable(GenerateWordList "app/GenerateWordList.cpp"
-    lib/include/SpinLock.h
-    lib/include/TreeSearch.h lib/src/TreeSearch.cpp)
+add_executable(GenerateWordList "app/GenerateWordList.cpp")
 add_executable(SearchAlgoCLI "app/SearchAlgoCLI.cpp")
 target_link_libraries(SearchAlgoCLI SearchAlgoLib)
 
