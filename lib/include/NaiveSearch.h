@@ -15,7 +15,7 @@ public:
     virtual ~NaiveSearch() = default;
 
     virtual bool loadWordList(const std::string &wordListPath) override;
-    virtual std::vector<std::string> searchWord(const std::string &subStr) override;
+    virtual std::vector<std::string> searchWords(const std::string &subStr) override;
     virtual std::vector<std::string> searchWord(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt);
 
 protected:

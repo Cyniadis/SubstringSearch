@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <limits.h>
 
 TreeSearch::TreeSearch(bool compactTree)
     : _compactTree(compactTree)
@@ -24,7 +25,7 @@ bool TreeSearch::loadWordList(const std::string &wordListPath)
     return true;
 }
 
-std::vector<std::string> TreeSearch::searchWord(const std::string &subStr)
+std::vector<std::string> TreeSearch::searchWords(const std::string &subStr)
 {
     std::vector<std::string> foundWords;
 
@@ -38,7 +39,7 @@ std::vector<std::string> TreeSearch::searchWord(const std::string &subStr)
         searchWordCompact(subStr, _searchTree, foundWords);
     }
     else {
-        searchWordRandomAccess(subStr, _searchTree, foundWords);
+        searchWordPreallocated(subStr, _searchTree, foundWords);
     }
 
 
@@ -74,10 +75,10 @@ void TreeSearch::addWordToTree(const std::string &word, const std::unique_ptr<Tr
         addWordToTreeCompact(word, treeNode, letterIdx);
     }
     else {
-        addWordToTreeRandomAccess(word, treeNode, letterIdx);
+        addWordToTreePreallocated(word, treeNode, letterIdx);
     }
 }
-void TreeSearch::addWordToTreeRandomAccess(const std::string &word, const std::unique_ptr<TreeNode>& treeNode, int letterIdx)
+void TreeSearch::addWordToTreePreallocated(const std::string &word, const std::unique_ptr<TreeNode>& treeNode, int letterIdx)
 {
     const char l = word[letterIdx];
 
@@ -97,7 +98,7 @@ void TreeSearch::addWordToTreeRandomAccess(const std::string &word, const std::u
 
 }
 
-void TreeSearch::searchWordRandomAccess(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+void TreeSearch::searchWordPreallocated(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
 {
     if( !treeNode || subStr.empty() ) {
         return;

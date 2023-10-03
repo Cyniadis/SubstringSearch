@@ -25,7 +25,7 @@ bool NaiveSearch::loadWordList(const std::string &wordListPath)
 }
 
 
-std::vector<std::string> NaiveSearch::searchWord(const std::string &subStr)
+std::vector<std::string> NaiveSearch::searchWords(const std::string &subStr)
 {
     return searchWord(subStr, std::begin(_wordList), std::end(_wordList));
 }

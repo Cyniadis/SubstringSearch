@@ -1,6 +1,7 @@
 #ifndef TREESEARCHPARALLEL_H
 #define TREESEARCHPARALLEL_H
 
+#include "SpinLock.h"
 #include "ThreadPool.h"
 #include "TreeSearch.h"
 #include <mutex>
@@ -15,14 +16,16 @@ public:
 private:
     ThreadPool _threadPool;
     unsigned _nbThreads;
-    std::mutex _mutex;
+//    std::mutex _mutex;
+    SpinLock _mutex;
     inline static std::vector<std::string> _foundWords;
+    bool _useDirectInsert;
 
 
 
     void searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords) override;
     void runSearchWord(const std::string &subStr,
-                       const std::unique_ptr<TreeNode>& treeNode,
+                       const std::unique_ptr<TreeNode>& TreeNode,
                        TreeNodeVecConstIterator startIt,
                        TreeNodeVecConstIterator endIt);
 
