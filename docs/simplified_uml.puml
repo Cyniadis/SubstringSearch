@@ -1,0 +1,126 @@
+@startuml
+
+skin rose
+
+
+
+abstract SearchInterface {
+  +SearchInterface()
+  +{abstract} \~SearchInterface()
+
+  {abstract} +loadWordList(const string& wordListPath) : bool
+  {abstract} +searchWords(const string& subStr) : vector<string>
+  +searchWordTimed(const string& subStr, unsigned long& elapsed) : vector<string>
+}
+
+class NaiveSearch
+{
+ +NaiveSearch()
+
+  #_wordList : vector<string>
+  +loadWordList(const string&) : bool
+  +searchWords(const string&) : vector<string>
+
+  +searchWords(const string &, const_iterator, const_iterator) : vector<string>
+  #startstWith(const string&  const string& ) : bool
+
+}
+class NaiveSearchParallel
+{
+  +NaiveSearchParallel(unsigned nbThreads, bool useDirectInsert);
+
+  +searchWords(const string &) : vector<string>
+
+  -runSearchWordDirectInsert(const string& , const_iterator, const_iterator)
+  -runSearchWordBatchedInsert(const string &, const_iterator, const_iterator, unsigned int)
+  -searchWordsDirectInsert(const string&) : vector<string>
+  -searchWordsBatchedInsert(const string &) : vector<string>
+
+  _threadPool : ThreadPool
+  _nbThreads : unsigned
+  _foundWords : vector<string>
+  _mutex : mutex / SpinLock
+  _useDirectInsert : bool
+
+  {static} foundWords : vector<string>
+
+}
+
+class TreeSearch::TreeNode
+{
+  +_letter : char
+  +_nextLetters : vector<unique_ptr<TreeNode>>
+  +_word : string
+
+  +TreeNode()
+  +TreeNode(char letter)
+  +isLetterValid() bool
+}
+
+class TreeSearch
+{
+  +TreeSearch(bool compactTree)
+  
+  #_searchTree : unique_ptr<TreeNode>
+  #_compactTree : bool
+
+  #addWordToTree(const string&, const unique_ptr<TreeNode>&, int)
+  #searchWordRec(const string&, const unique_ptr<TreeNode>&, vector<string>&)
+
+  #addWordToTreePreallocated(const string&, const unique_ptr<TreeNode>&, int)
+  #searchWordPreallocated(const string&, const unique_ptr<TreeNode>&, vector<string>&)
+
+  #findLetter(const unique_ptr<TreeNode>&, const char&) : iterator
+  #addWordToTreeCompact(const string&, const unique_ptr<TreeNode>&, int)
+  #searchWordCompact(const string&, const unique_ptr<TreeNode>&, vector<string>&)
+}
+
+class TreeSearchParallel
+{
+  +TreeSearchParallel(unsigned, bool)
+
+  -_threadPool : ThreadPool
+  -_nbThreads : unsigned
+  -_foundWords : vector<string>
+  -_mutex : mutex / SpinLock
+  -_useDirectInsert : bool
+
+  -searchWordRec(const string&, const unique_ptr<TreeNode>&, vector<string>&)
+  -runSearchWord(const string&, const unique_ptr<TreeNode>&, const_iterator, const_iterator)
+}
+
+class SpinLock
+{
+  +lock()
+  +unlock()
+
+  -locked : atomic_flag
+}
+class ThreadPool
+{
+  -_threadPool : vector<thread>
+  -_idx : unsigned
+
+  +ThreadPool(unsigned int)
+
+  +runThread(function<void(void)>) : int
+  +jointThread(int)
+  +isThreadValid(int) : bool
+  jointAllThreads()
+  {static}  getMaxThreads() : unsigned
+  getThreadPoolSize() : size_t
+}
+
+NaiveSearchParallel o- SpinLock
+TreeSearchParallel o- SpinLock
+
+NaiveSearchParallel o- ThreadPool
+TreeSearchParallel o- ThreadPool
+TreeSearch o- TreeSearch::TreeNode
+
+SearchInterface <|-- NaiveSearch
+NaiveSearch <|-- NaiveSearchParallel
+SearchInterface <|-- TreeSearch
+TreeSearch <|-- TreeSearchParallel
+
+@enduml

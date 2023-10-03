@@ -1,0 +1,136 @@
+@startuml
+
+skin rose
+
+
+
+abstract SearchInterface {
+  +SearchInterface()
+  +{abstract} \~SearchInterface()
+
+  {abstract} +loadWordList(const std::string& wordListPath) : bool
+  {abstract} +searchWords(const std::string& subStr) : std::vector<std::string>
+  +searchWordTimed(const std::string& subStr, unsigned long& elapsed) : std::vector<std::string>
+}
+
+class NaiveSearch
+{
+
+  +NaiveSearch()
+  +{abstract} \~NaiveSearch()
+
+  #_wordList : std::vector<std::string>
+  +loadWordList(const std::string& wordListPath) : bool
+  +searchWords(const std::string& subStr) : std::vector<std::string>
+
+  +searchWords(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt) : std::vector<std::string>
+  #startstWith(const std::string& word, const std::string& subStr) : bool
+
+}
+class NaiveSearchParallel
+{
+  +NaiveSearchParallel(unsigned nbThreads, bool useDirectInsert);
+  +\~NaiveSearchParallel()
+
+  +searchWords(const std::string &subStr) : std::vector<std::string>
+
+  -runSearchWordDirectInsert(const std::string& word, StringVecConstIterator startIt, StringVecConstIterator endIt)
+  -runSearchWordBatchedInsert(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt, unsigned int threadIdx)
+  -searchWordsDirectInsert(const std::string& subStr) : std::vector<std::string>
+  -searchWordsBatchedInsert(const std::string &subStr) : std::vector<std::string>
+
+
+  -_threadPool : ThreadPool
+  -_nbThreads : unsigned
+  -_foundWords : std::vector<std::string>
+  -_mutex : std::mutex / SpinLock
+  -_useDirectInsert : bool
+
+  -{static} foundWords : std::vector<std::string>
+
+}
+
+class TreeSearch::TreeNode
+{
+  +_letter : char
+  +_nextLetters : std::vector<std::unique_ptr<TreeNode>>
+  +_word : std::string
+
+  +TreeNode()
+  +TreeNode(char letter)
+  +isLetterValid() bool 
+}
+
+class TreeSearch
+{
+  +TreeSearch(bool compactTree)
+  +\~TreeSearch()
+
+  #_searchTree : std::unique_ptr<TreeNode>
+  #_compactTree : bool
+
+  #addWordToTree(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx) 
+  #searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+
+  #addWordToTreePreallocated(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx) 
+  #searchWordPreallocated(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+
+  #findLetter(const std::unique_ptr<TreeNode> &treeNode, const char& letter) : std::vector<std::unique_ptr<TreeSearch::TreeNode>>::iterator
+  #addWordToTreeCompact(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx)
+  #searchWordCompact(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+}
+
+class TreeSearchParallel
+{
+  +TreeSearchParallel(unsigned, bool)
+  +\~TreeSearchParallel()
+
+  -_threadPool : ThreadPool
+  -_nbThreads : unsigned
+  -_foundWords : std::vector<std::string>
+  -_mutex : std::mutex / SpinLock
+  -_useDirectInsert : bool
+
+  -searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+  -runSearchWord(const std::string &subStr,
+                       const std::unique_ptr<TreeNode>& TreeNode,
+                       TreeNodeVecConstIterator startIt,
+                       TreeNodeVecConstIterator endIt)
+}
+
+class SpinLock
+{
+    +lock()
+    +unlock()
+
+    -locked : std::atomic_flag
+}
+class ThreadPool 
+{
+  -_threadPool : std::vector<std::thread>
+  -_idx : unsigned
+
+  +ThreadPool(unsigned int nbThreads)
+  +\~ThreadPool()
+
+  +runThread(std::function<void(void)> func) : int
+  +jointThread(int idx)
+  +isThreadValid(int idx) : bool 
+  jointAllThreads()
+  {static}  getMaxThreads() : unsigned
+  getThreadPoolSize() : size_t
+}
+
+NaiveSearchParallel o- SpinLock
+TreeSearchParallel o- SpinLock
+
+NaiveSearchParallel o- ThreadPool
+TreeSearchParallel o- ThreadPool
+TreeSearch o- TreeSearch::TreeNode
+
+SearchInterface <|-- NaiveSearch
+NaiveSearch <|-- NaiveSearchParallel
+SearchInterface <|-- TreeSearch
+TreeSearch <|-- TreeSearchParallel
+
+@enduml
