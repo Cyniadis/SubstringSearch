@@ -27,16 +27,18 @@ bool NaiveSearch::loadWordList(const std::string &wordListPath)
 
 std::vector<std::string> NaiveSearch::searchWords(const std::string &subStr)
 {
-    return searchWord(subStr, std::begin(_wordList), std::end(_wordList));
+    return searchWords(subStr, std::begin(_wordList), std::end(_wordList));
 }
 
-std::vector<std::string> NaiveSearch::searchWord(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt)
+std::vector<std::string> NaiveSearch::searchWords(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt)
 {
     std::vector<std::string> foundWords;
 
-    for( StringVecConstIterator it = startIt; it != endIt; ++it ) {
-        const std::string word = (*it);
-        if( startstWith(word, subStr) ) {
+    for( StringVecConstIterator it = startIt; it != endIt; ++it )
+    {
+        const std::string& word = (*it);
+        if( startstWith(word, subStr) )
+        {
             foundWords.push_back(word);
         }
     }

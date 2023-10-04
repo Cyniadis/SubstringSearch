@@ -41,7 +41,7 @@ void TreeSearchParallel::runSearchDirectInsert(const std::shared_ptr<TreeNodeBas
                                                 unsigned idx,
                                                 std::vector<std::string>& foundWords)
 {
-    std::function<void(std::shared_ptr<TreeNodeBase> &)> func = std::bind(&TreeSearchParallel::saveWordSafe, this, std::placeholders::_1, foundWords);
+    std::function<void(std::shared_ptr<TreeNodeBase> &)> func = std::bind(&TreeSearchParallel::saveWordSafe, this, std::placeholders::_1, std::ref(foundWords));
     treeNode->visitPartialTree(nbSplits, idx, func);
 }
 
@@ -53,20 +53,24 @@ void TreeSearchParallel::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase>
         return;
     }
 
+    if( !treeNode->getWord().empty() ) {
+        saveWord( const_cast<std::shared_ptr<TreeNodeBase>&>(treeNode), foundWords);
+        return;
+    }
+
     for( unsigned i = 0; i < _nbThreads; ++i )
     {
         std::function<void(void)> func;
 
         if( _useDirectInsert ) {
-            func = std::bind(&TreeSearchParallel::runSearchDirectInsert, this, treeNode, _nbThreads, i, foundWords);
+            func = std::bind(&TreeSearchParallel::runSearchDirectInsert, this, treeNode, _nbThreads, i, std::ref(foundWords));
         }
         else {
-            func = std::bind(&TreeSearchParallel::runSearchBatchedInsert, this, treeNode, _nbThreads, i, foundWords);
+            func = std::bind(&TreeSearchParallel::runSearchBatchedInsert, this, treeNode, _nbThreads, i, std::ref(foundWords));
         }
         _threadPool.runThread(func);
     }
     _threadPool.jointAllThreads();
-    foundWords = std::move(this->_foundWords);
 }
 
 

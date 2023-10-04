@@ -1,5 +1,6 @@
 #include <iostream>
 #include <getopt.h>
+#include <iterator>
 #include <memory>
 
 #include "NaiveSearch.h"
@@ -19,7 +20,7 @@ void usage() {
 int main(int argc, char *argv[])
 {
     // Command-line options and their corresponding short and long forms
-    const char* shortOptions = "hw:j:l:m:";
+    const char* shortOptions = "hw:j:l:m:a:";
     const struct option longOptions[] =
     {
         {"help", no_argument, nullptr, 'h'},
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if( algo != "naive" || algo != "naive_parallel" ) {
+    if( algo != "naive" && algo != "naive_parallel" ) {
         std::cerr << "ERROR: Invalid algorithm\n";
     }
 
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
     unsigned long elapsed;
 
     // Instanciate algorithm
-    if( algo == "naive " ) {
+    if( algo == "naive" ) {
         searchAlgo = std::make_unique<NaiveSearch>();
     }
     else if( algo == "naive_parallel" ) {
@@ -100,6 +101,8 @@ int main(int argc, char *argv[])
     std::vector<std::string> words = searchAlgo->searchWordTimed(word, elapsed);
 
     // Output results
+    std::copy(words.begin(), words.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+
     std::cout << words.size() << " words has been found in " << elapsed << " us\n";
 
     return 0;
