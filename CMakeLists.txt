@@ -22,7 +22,7 @@ include_directories(gui)
 # Use file(GLOB ...) to gather source files using wildcards
 # LIBS
 file(GLOB SOURCES "lib/src/*.cpp")
-file(GLOB HEADERS "lib/include/*.h")
+file(GLOB HEADERS "lib/include/*.h" "lib/include/*.hpp")
 add_library(SearchAlgoLib SHARED ${SOURCES} ${HEADERS})
 
 

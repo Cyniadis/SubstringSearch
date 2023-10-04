@@ -1,48 +1,74 @@
 #include "TreeSearchParallel.h"
 
-TreeSearchParallel::TreeSearchParallel(unsigned nbThreads, bool compactTree)
-    : TreeSearch(compactTree),
+TreeSearchParallel::TreeSearchParallel(unsigned int nbThreads, std::shared_ptr<TreeNodeBase> searchTree, bool useDirectInsert)
+    : TreeSearch(searchTree),
     _threadPool(nbThreads),
-    _nbThreads(nbThreads)
+    _nbThreads(nbThreads),
+    _useDirectInsert(useDirectInsert)
 {
 
 }
 
-void TreeSearchParallel::runSearchWord(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, TreeNodeVecConstIterator startIt, TreeNodeVecConstIterator endIt)
+void TreeSearchParallel::runSearchBatchedInsert(const std::shared_ptr<TreeNodeBase> &treeNode,
+                                                unsigned nbSplits,
+                                                unsigned idx,
+                                                std::vector<std::string>& foundWords)
 {
-    if( treeNode->_nextLetters.empty() ) // Is leaf
+    std::vector<std::string> partFoundWords;
+    std::function<void(std::shared_ptr<TreeNodeBase> &)> func = std::bind(&TreeSearchParallel::saveWord, this, std::placeholders::_1, std::ref(partFoundWords));
+    treeNode->visitPartialTree(nbSplits, idx, func);
+    _mutex.lock();
+    foundWords.insert(foundWords.end(), std::make_move_iterator(partFoundWords.begin()), std::make_move_iterator(partFoundWords.end()));
+    _mutex.unlock();
+}
+
+void TreeSearchParallel::saveWordSafe(std::shared_ptr<TreeNodeBase> &treeNode,
+                                      std::vector<std::string> &foundWords)
+{
+    const std::string& word = treeNode->getWord();
+    if (!word.empty()) // Is leaf
     {
         _mutex.lock();
-        this->_foundWords.push_back(treeNode->_word);
+        foundWords.push_back(word);
         _mutex.unlock();
-    }
-
-    for( auto it = startIt; it != endIt; ++it )
-    {
-        if( (*it) ) {
-            runSearchWord(subStr, (*it), (*it)->_nextLetters.begin(), (*it)->_nextLetters.end());
-        }
     }
 }
 
-void TreeSearchParallel::searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords)
+
+
+void TreeSearchParallel::runSearchDirectInsert(const std::shared_ptr<TreeNodeBase> &treeNode,
+                                                unsigned nbSplits,
+                                                unsigned idx,
+                                                std::vector<std::string>& foundWords)
 {
-    if( !treeNode || treeNode->_nextLetters.empty() ) {
+    std::function<void(std::shared_ptr<TreeNodeBase> &)> func = std::bind(&TreeSearchParallel::saveWordSafe, this, std::placeholders::_1, foundWords);
+    treeNode->visitPartialTree(nbSplits, idx, func);
+}
+
+
+void TreeSearchParallel::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase> &treeNode,
+                                             std::vector<std::string> &foundWords)
+{
+    if( !treeNode ) {
         return;
     }
 
-    for( int i = 0; i < _nbThreads; ++i )
+    for( unsigned i = 0; i < _nbThreads; ++i )
     {
-        int step = (treeNode->_nextLetters.size() / _nbThreads); //add check if step = 0;
-        TreeNodeVecConstIterator startIt = std::begin(treeNode->_nextLetters) + i * step;
-        TreeNodeVecConstIterator endIt = (i == _nbThreads -1 ) ? treeNode->_nextLetters.end() : (startIt + step);
+        std::function<void(void)> func;
 
-        std::function<void(void)> func = std::bind(&TreeSearchParallel::runSearchWord, this, subStr, std::ref(treeNode), startIt, endIt);
+        if( _useDirectInsert ) {
+            func = std::bind(&TreeSearchParallel::runSearchDirectInsert, this, treeNode, _nbThreads, i, foundWords);
+        }
+        else {
+            func = std::bind(&TreeSearchParallel::runSearchBatchedInsert, this, treeNode, _nbThreads, i, foundWords);
+        }
         _threadPool.runThread(func);
     }
     _threadPool.jointAllThreads();
     foundWords = std::move(this->_foundWords);
 }
+
 
 
 
