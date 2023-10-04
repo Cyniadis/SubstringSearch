@@ -11,8 +11,8 @@ class TreeSearchParallel : public TreeSearch
 {
 
 public:
-
     TreeSearchParallel(unsigned nbThreads, std::shared_ptr<TreeNodeBase> searchTree, bool useDirectInsert);
+    ~TreeSearchParallel() = default;
 
 private:
     ThreadPool _threadPool;
@@ -20,7 +20,6 @@ private:
 
 //    std::mutex _mutex;
     SpinLock _mutex;
-    inline static std::vector<std::string> _foundWords;
     bool _useDirectInsert;
 
 private:

@@ -23,11 +23,11 @@ private:
 //    std::mutex _mutex;
     SpinLock _mutex;
     bool _useDirectInsert;
-    inline static std::vector<std::string> _foundWords;
+    std::vector<std::string> _foundWords;
 
 private:
-    void runSearchWordSingleVector(const std::string& word, StringVecConstIterator startIt, StringVecConstIterator endIt);
-    void runSearchWordBatchedInsert(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt, unsigned int threadIdx);
+    void runSearchWordDirectInsert(const std::string& word, StringVecConstIterator startIt, StringVecConstIterator endIt);
+    void runSearchWordBatchedInsert(const std::string &subStr, StringVecConstIterator startIt, StringVecConstIterator endIt);
 
     std::vector<std::string> searchWordsDirectInsert(const std::string& subStr);
     std::vector<std::string> searchWordsBatchedInsert(const std::string &subStr);

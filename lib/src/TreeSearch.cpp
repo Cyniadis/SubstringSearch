@@ -25,6 +25,11 @@ std::vector<std::string> TreeSearch::searchWords(const std::string &subStr)
 {
     std::vector<std::string> foundWords;
     std::shared_ptr<TreeNodeBase> startNode = findPrefixSubTree(_searchTree, subStr, 0);
+    if( startNode == _searchTree ) // No prefix found
+    {
+        return foundWords;
+    }
+
     saveAllSubtreeWords(startNode, foundWords);
     return foundWords;
 }
@@ -85,6 +90,12 @@ void TreeSearch::addWordToTree(const std::string &word,
 void TreeSearch::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase> &treeNode,
                                     std::vector<std::string> &foundWords)
 {
-    std::function<void(std::shared_ptr<TreeNodeBase> &)> func = std::bind(&TreeSearch::saveWord, this, std::placeholders::_1, std::ref(foundWords));
-    treeNode->visitTree(func);
+    std::function<void(std::shared_ptr<TreeNodeBase> &)> saveFunc = std::bind(&TreeSearch::saveWord, this, std::placeholders::_1, std::ref(foundWords));
+
+    if( !treeNode->getWord().empty() ) {
+        saveWord( const_cast<std::shared_ptr<TreeNodeBase>&>(treeNode), std::ref(foundWords));
+        return;
+    }
+
+    treeNode->visitTree(saveFunc);
 }

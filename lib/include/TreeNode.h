@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <climits>
+#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -25,10 +26,10 @@ public:
     inline std::string getWord() const { return _word; }
     inline void setWord(const std::string& newWord) { _word = newWord; }
 
-    virtual void visitTree(std::function<void(std::shared_ptr<TreeNodeBase> &)> func) = 0;
+    virtual void visitTree(std::function<void(std::shared_ptr<TreeNodeBase> &)>& func) = 0;
     virtual void visitPartialTree(unsigned nbSplits,
                                   unsigned idx,
-                                  std::function<void(std::shared_ptr<TreeNodeBase> &)> func) = 0;
+                                  std::function<void(std::shared_ptr<TreeNodeBase> &)>& func) = 0;
 
 
 protected:
@@ -54,7 +55,7 @@ public:
                                        typename ContainerType::iterator &start,
                                        typename ContainerType::iterator &end)
     {
-        if( nbSplits <= 1 ) {
+        if( nbSplits <= 1  || _nextLetters.size() <= nbSplits) {
             start = std::begin(_nextLetters);
             end = std::end(_nextLetters);
             return;
@@ -69,18 +70,18 @@ public:
             end = std::end(_nextLetters);
         } else {
             end = start;
-            std::advance(start, step);
+            std::advance(end, step);
         }
     }
 
-    virtual void visitTree(std::function<void(std::shared_ptr<TreeNodeBase> &)> func)
+    virtual void visitTree(std::function<void(std::shared_ptr<TreeNodeBase> &)>& func)
     {
         visitPartialTree(_nextLetters.begin(), _nextLetters.end(), func);
     }
 
     virtual void visitPartialTree(unsigned nbSplits,
-                          unsigned idx,
-                          std::function<void(std::shared_ptr<TreeNodeBase> &)> func)
+                                  unsigned idx,
+                                  std::function<void(std::shared_ptr<TreeNodeBase> &)>& func)
     {
         typename ContainerType::iterator start, end;
         this->getPartialNextLetters(nbSplits, idx, start, end);
@@ -89,7 +90,7 @@ public:
 
     virtual void visitPartialTree(typename ContainerType::iterator start,
                                   typename ContainerType::iterator end,
-                                  std::function<void(std::shared_ptr<TreeNodeBase> &)> func) = 0;
+                                  std::function<void(std::shared_ptr<TreeNodeBase> &)>& func) = 0;
 
 protected:
     ContainerType _nextLetters;
@@ -100,33 +101,19 @@ protected:
 class TreeNodeHashTable : public TreeNode<std::unordered_map<char, std::shared_ptr<TreeNodeHashTable>>>
 {
 public:
-    TreeNodeHashTable() : TreeNode() {}
-    TreeNodeHashTable(char letter) : TreeNode(letter) {}
+    using MapType = std::unordered_map<char, std::shared_ptr<TreeNodeHashTable>>;
+
+    TreeNodeHashTable();
+    TreeNodeHashTable(char letter);
     ~TreeNodeHashTable() = default;
 
-    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override
-    {
-        treeNode = std::shared_ptr<TreeNodeBase>(_nextLetters[letter]);
-        return true;
-    }
+    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override;
 
-    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
-    {
-        auto res = _nextLetters.insert({letter, std::make_shared<TreeNodeHashTable>(letter)});
-        childNode = res.first->second;
-    }
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override;
 
-    void visitPartialTree(typename std::unordered_map<char, std::shared_ptr<TreeNodeHashTable>>::iterator start,
-                          typename std::unordered_map<char, std::shared_ptr<TreeNodeHashTable>>::iterator end,
-                          std::function<void(std::shared_ptr<TreeNodeBase> &)> func) override
-    {
-        for( auto it = start; it != end; ++it )
-        {
-            std::shared_ptr<TreeNodeBase> node = it->second;
-            func(node);
-            it->second->visitTree(func);
-        }
-    }
+    void visitPartialTree(typename MapType::iterator start,
+                          typename MapType::iterator end,
+                          std::function<void(std::shared_ptr<TreeNodeBase> &)>& func) override;
 };
 
 //////////////////////////////////////////////////////////////////
@@ -134,42 +121,17 @@ public:
 class TreeNodeVector : public TreeNode<std::vector<std::shared_ptr<TreeNodeVector>>>
 {
 public:
-    TreeNodeVector() : TreeNode() {}
-    TreeNodeVector(char letter) : TreeNode(letter) {}
+    TreeNodeVector();
+    TreeNodeVector(char letter);
     ~TreeNodeVector() = default;
 
-    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override
-    {
-        treeNode = _nextLetters[letter];
-        return true;
-    }
+    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override;
 
-    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
-    {
-        _nextLetters.resize(UCHAR_MAX + 1);
-        if( _nextLetters[letter] ) {
-            childNode = _nextLetters[letter];
-            return;
-        }
-        _nextLetters[letter] = std::make_shared<TreeNodeVector>(letter);
-        childNode = _nextLetters[letter];
-        return;
-    }
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override;
 
     void visitPartialTree(typename std::vector<std::shared_ptr<TreeNodeVector>>::iterator start,
                           typename std::vector<std::shared_ptr<TreeNodeVector>>::iterator end,
-                          std::function<void(std::shared_ptr<TreeNodeBase> &)> func) override
-    {
-        for( auto it = start; it != end; ++it )
-        {
-            std::shared_ptr<TreeNodeBase> node = (*it);
-            if (node)
-            {
-                func(node);
-                node->visitTree(func);
-            }
-        }
-    }
+                          std::function<void(std::shared_ptr<TreeNodeBase> &)>& func) override;
 };
 
 //////////////////////////////////////////////////////////////////
@@ -177,42 +139,18 @@ public:
 class TreeNodeVectorCompact : public TreeNode<std::vector<std::shared_ptr<TreeNodeVectorCompact>>>
 {
 public:
-    TreeNodeVectorCompact() : TreeNode() {}
-    TreeNodeVectorCompact(char letter) : TreeNode(letter) {}
+    TreeNodeVectorCompact();
+    TreeNodeVectorCompact(char letter);
     ~TreeNodeVectorCompact() = default;
 
-    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override
-    {
-        auto compareFunc = [&](const std::shared_ptr<TreeNodeVectorCompact> &treeNode) { return (treeNode->getLetter() == letter); };
+    bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) override;
 
-        auto it = std::find_if(_nextLetters.begin(), _nextLetters.end(), compareFunc);
-        if (it == _nextLetters.end()) {
-            return false;
-        }
-        treeNode = (*it);
-        return true;
-    }
-
-    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
-    {
-        if( !getNodeByLetter(letter, childNode) ) {
-            _nextLetters.push_back(std::make_shared<TreeNodeVectorCompact>(letter));
-            childNode = _nextLetters.back();
-        }
-    }
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override;
 
 
     void visitPartialTree(typename std::vector<std::shared_ptr<TreeNodeVectorCompact>>::iterator start,
                           typename std::vector<std::shared_ptr<TreeNodeVectorCompact>>::iterator end,
-                          std::function<void(std::shared_ptr<TreeNodeBase> &)> func) override
-    {
-        for( auto it = start; it != end; ++it )
-        {
-            std::shared_ptr<TreeNodeBase> node = (*it);
-            func(node);
-            (*it)->visitTree(func);
-        }
-    }
+                          std::function<void (std::shared_ptr<TreeNodeBase> &)> &func) override;
 };
 
 #endif // !TREENODE_H

@@ -28,7 +28,7 @@ add_library(SearchAlgoLib SHARED ${SOURCES} ${HEADERS})
 
 # Main apps
 add_executable(GenerateWordList "app/GenerateWordList.cpp"
-    gui/ParametersDialog.ui)
+)
 add_executable(SearchAlgoCLI "app/SearchAlgoCLI.cpp")
 target_link_libraries(SearchAlgoCLI SearchAlgoLib)
 
@@ -36,14 +36,10 @@ add_executable(SearchAlgoTests "app/SearchAlgoTests.cpp")
 target_link_libraries(SearchAlgoTests SearchAlgoLib)
 
 
-
 # GUI
 file(GLOB GUI_SOURCES "gui/*.cpp" "gui/*.h" "gui/*.ui")
-#add_library(gui SHARED ${GUI_SOURCES})
-#target_link_libraries(gui ${QT_DEPS})
-
 add_executable(SearchAlgoGUI "app/SearchAlgoGUI.cpp"  ${GUI_SOURCES})
-target_link_libraries(SearchAlgoGUI ${QT_DEPS})
+target_link_libraries(SearchAlgoGUI ${QT_DEPS} SearchAlgoLib)
 
 
 # string(REPLACE "-O3" "-O0"  CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
