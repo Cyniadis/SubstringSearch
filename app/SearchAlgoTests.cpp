@@ -33,8 +33,6 @@ static void runTest(const std::string& wordListFile, const std::string& word, co
     std::cout <<  std::left << std::setw(45) << name << " - TOTAL " << totalElapsed << " us\n";
 }
 
-
-#include <iostream>
 int main(int argc, char *argv[])
 {
     std::ios_base::sync_with_stdio(false);
@@ -46,22 +44,23 @@ int main(int argc, char *argv[])
 
     const std::string wordListPath(argv[1]);
     const std::string word = "A";
-    const unsigned nbThreads = 8;
-    const unsigned nbRuns = 10;
+    const unsigned nbThreads = 4;
+    const unsigned nbRuns = 1;
 
 
-        // NAIVE SEARCH SINGLE THREAD
-        runTest<NaiveSearch>(wordListPath, word, "NAIVE SEARCH SINGLE THREAD", nbRuns);
+    // NAIVE SEARCH SINGLE THREAD
+    runTest<NaiveSearch>(wordListPath, word, "NAIVE SEARCH SINGLE THREAD", nbRuns);
 
-        // NAIVE SEARCH MULTI THREAD
-        runTest<NaiveSearchParallel>(wordListPath, word, "NAIVE SEARCH MULTI THREADS (direct insert)", nbRuns, nbThreads, true);
-        runTest<NaiveSearchParallel>(wordListPath, word, "NAIVE SEARCH MULTI THREADS (batched insert)", nbRuns, nbThreads, false);
+    // NAIVE SEARCH MULTI THREAD
+    runTest<NaiveSearchParallel>(wordListPath, word, "NAIVE SEARCH MULTI THREADS (direct insert)", nbRuns, nbThreads, true);
+    runTest<NaiveSearchParallel>(wordListPath, word, "NAIVE SEARCH MULTI THREADS (batched insert)", nbRuns, nbThreads, false);
 
-        // TREE SEARCH SINGLE THREAD
-        runTest<TreeSearch>(wordListPath, word,  "TREE SEARCH SINGLE THREAD (compact)", nbRuns, true);
-        runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (random access)", nbRuns, false);
+    // TREE SEARCH SINGLE THREAD
+    runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (compact)",       nbRuns, std::make_shared<TreeNodeVectorCompact>());
+    runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (random access)", nbRuns, std::make_shared<TreeNodeVector>());
+    runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (hash table)",    nbRuns, std::make_shared<TreeNodeHashTable>());
 
         // TREE SEARCH MULTI THREAD
-        runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (compact)", nbRuns, nbThreads, true);
-        runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (random access)", nbRuns, nbThreads, false);
+        //runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (compact)", nbRuns, nbThreads, true);
+        //runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (random access)", nbRuns, nbThreads, false);
 }

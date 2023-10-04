@@ -1,53 +1,37 @@
 #ifndef TREESEARCH_H
 #define TREESEARCH_H
 
-#include <SearchInterface.h>
+#include "SearchInterface.h"
+#include "TreeNode.h"
+
+#include <fstream>
 #include <memory>
+#include <type_traits>
 
 class TreeSearch : public SearchInterface
 {
 public:
-
-    struct TreeNode
-    {
-        TreeNode()
-            : _letter('\0')
-        {
-        }
-
-        TreeNode(char letter)
-            : _letter(letter)
-        {
-        }
-
-        bool isLetterValid() { return (_letter != '\0'); }
-
-        char _letter;
-        std::vector<std::unique_ptr<TreeNode>> _nextLetters;
-        std::string _word;
-    };
-    
-    TreeSearch(bool compactTree);
+    TreeSearch(std::shared_ptr<TreeNodeBase> searchTree);
     virtual ~TreeSearch() = default;
 
-    bool loadWordList(const std::string &wordListPath);
-    std::vector<std::string> searchWords(const std::string &subStr);
+    virtual bool loadWordList(const std::string &wordListPath) override;
+    virtual std::vector<std::string> searchWords(const std::string &subStr) override;
 
 protected:
-    std::unique_ptr<TreeNode> _searchTree;
-    bool _compactTree;
+    std::shared_ptr<TreeNodeBase> _searchTree;
 
 protected:
-    virtual void addWordToTree(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx);
-    virtual void searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords);
+    virtual std::shared_ptr<TreeNodeBase> &findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
+                                                             const std::string &subStr,
+                                                             int letterIdx);
+    virtual void saveWord(std::shared_ptr<TreeNodeBase> &treeNode,
+                          std::vector<std::string> &foundWords);
 
-    virtual void addWordToTreePreallocated(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx);
-    virtual void searchWordPreallocated(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords);
-    
-    virtual std::vector<std::unique_ptr<TreeSearch::TreeNode>>::iterator findLetter(const std::unique_ptr<TreeNode> &treeNode, const char& letter);
-    virtual void addWordToTreeCompact(const std::string &word, const std::unique_ptr<TreeNode> &treeNode, int letterIdx);
-    virtual void searchWordCompact(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords);
-
+    virtual void addWordToTree(const std::string &word,
+                               const std::shared_ptr<TreeNodeBase> &treeNode,
+                               int letterIdx);
+    virtual void saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase>& treeNode,
+                                     std::vector<std::string> &foundWords);
 };
 
 #endif // TREESEARCH_H

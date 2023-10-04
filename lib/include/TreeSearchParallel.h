@@ -6,30 +6,29 @@
 #include "TreeSearch.h"
 #include <mutex>
 
+
 class TreeSearchParallel : public TreeSearch
 {
-    using TreeNodeVecConstIterator = std::vector<std::unique_ptr<TreeNode>>::const_iterator;
 
 public:
-    TreeSearchParallel(unsigned nbThreads, bool compactTree);
+
+    TreeSearchParallel(unsigned nbThreads, std::shared_ptr<TreeNodeBase> searchTree, bool useDirectInsert);
 
 private:
     ThreadPool _threadPool;
     unsigned _nbThreads;
+
 //    std::mutex _mutex;
     SpinLock _mutex;
     inline static std::vector<std::string> _foundWords;
     bool _useDirectInsert;
 
+private:
 
-
-    void searchWordRec(const std::string &subStr, const std::unique_ptr<TreeNode> &treeNode, std::vector<std::string> &foundWords) override;
-    void runSearchWord(const std::string &subStr,
-                       const std::unique_ptr<TreeNode>& TreeNode,
-                       TreeNodeVecConstIterator startIt,
-                       TreeNodeVecConstIterator endIt);
-
-
+    void runSearchBatchedInsert(const std::shared_ptr<TreeNodeBase>& treeNode, unsigned int nbSplits, unsigned int idx, std::vector<std::string>& foundWords);
+    void saveWordSafe(std::shared_ptr<TreeNodeBase>& treeNode, std::vector<std::string>& foundWords);
+    void runSearchDirectInsert(const std::shared_ptr<TreeNodeBase>& treeNode, unsigned int nbSplits, unsigned int idx, std::vector<std::string>& foundWords);
+    void saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase>& treeNode, std::vector<std::string>& foundWords);
 };
 
 #endif // TREESEARCHPARALLEL_H
