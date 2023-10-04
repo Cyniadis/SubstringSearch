@@ -21,7 +21,7 @@ protected:
     std::shared_ptr<TreeNodeBase> _searchTree;
 
 protected:
-    virtual std::shared_ptr<TreeNodeBase> &findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
+    virtual std::shared_ptr<TreeNodeBase> findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
                                                              const std::string &subStr,
                                                              int letterIdx);
     virtual void saveWord(std::shared_ptr<TreeNodeBase> &treeNode,

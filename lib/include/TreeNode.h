@@ -17,7 +17,7 @@ public:
     virtual ~TreeNodeBase() = default;
 
     virtual bool getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase>& treeNode) = 0;
-    virtual bool addChildNode(char letter) = 0;
+    virtual void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) = 0;
 
     inline char getLetter() const { return _letter; }
     inline bool isLetterValid() { return (_letter != '\0'); }
@@ -110,12 +110,10 @@ public:
         return true;
     }
 
-    bool addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
     {
         auto res = _nextLetters.insert({letter, std::make_shared<TreeNodeHashTable>(letter)});
-        std::shared_ptr<TreeNodeBase> node = *(res.first);
-        childNode = node;
-        return res.second;
+        childNode = res.first->second;
     }
 
     void visitPartialTree(typename std::unordered_map<char, std::shared_ptr<TreeNodeHashTable>>::iterator start,
@@ -146,14 +144,16 @@ public:
         return true;
     }
 
-    bool addChildNode(char letter) override
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
     {
         _nextLetters.resize(UCHAR_MAX + 1);
         if( _nextLetters[letter] ) {
-            return false;
+            childNode = _nextLetters[letter];
+            return;
         }
         _nextLetters[letter] = std::make_shared<TreeNodeVector>(letter);
-        return true;
+        childNode = _nextLetters[letter];
+        return;
     }
 
     void visitPartialTree(typename std::vector<std::shared_ptr<TreeNodeVector>>::iterator start,
@@ -163,8 +163,11 @@ public:
         for( auto it = start; it != end; ++it )
         {
             std::shared_ptr<TreeNodeBase> node = (*it);
-            func(node);
-            (*it)->visitTree(func);
+            if (node)
+            {
+                func(node);
+                node->visitTree(func);
+            }
         }
     }
 };
@@ -190,10 +193,12 @@ public:
         return true;
     }
 
-    bool addChildNode(char letter) override
+    void addChildNode(char letter, std::shared_ptr<TreeNodeBase>& childNode) override
     {
-        _nextLetters.push_back(std::make_shared<TreeNodeVectorCompact>(letter));
-        return true;
+        if( !getNodeByLetter(letter, childNode) ) {
+            _nextLetters.push_back(std::make_shared<TreeNodeVectorCompact>(letter));
+            childNode = _nextLetters.back();
+        }
     }
 
 

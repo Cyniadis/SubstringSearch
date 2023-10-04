@@ -26,7 +26,7 @@ static void runTest(const std::string& wordListFile, const std::string& word, co
     {
         unsigned long elapsed;
         std::vector<std::string> foundWords = searchAlgo.searchWordTimed(word, elapsed);
-//        std::cout <<  std::left << std::setw(45) << name << " - run " << i << ": " << foundWords.size() << " words has been found in " << elapsed << " us\n";
+        std::cout <<  std::left << std::setw(45) << name << " - RUN " << (i+1) << ": " << foundWords.size() << " words has been found in " << elapsed << " us\n";
         totalElapsed += elapsed;
     }
     totalElapsed /= nbRuns;

@@ -29,18 +29,26 @@ std::vector<std::string> TreeSearch::searchWords(const std::string &subStr)
     return foundWords;
 }
 
-std::shared_ptr<TreeNodeBase> &TreeSearch::findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
+std::shared_ptr<TreeNodeBase> TreeSearch::findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
                                                              const std::string &subStr,
                                                              int letterIdx)
 {
-    if (letterIdx == subStr.size() - 1) {
+
+
+    if ((letterIdx == subStr.size() - 1 )&& (treeNode != _searchTree)) {
         return treeNode;
     }
+
 
     const char l = subStr[letterIdx];
     std::shared_ptr<TreeNodeBase> node;
     if (!treeNode->getNodeByLetter(l, node)) {
         return treeNode;
+    }
+
+    if( treeNode == _searchTree) // if root
+    {
+        return findPrefixSubTree(node, subStr, letterIdx);
     }
     return findPrefixSubTree(node, subStr, letterIdx + 1);
 }
@@ -48,6 +56,9 @@ std::shared_ptr<TreeNodeBase> &TreeSearch::findPrefixSubTree(std::shared_ptr<Tre
 void TreeSearch::saveWord(std::shared_ptr<TreeNodeBase> &treeNode,
                           std::vector<std::string> &foundWords)
 {
+    if( !treeNode ) {
+        return;
+    }
     const std::string& word = treeNode->getWord();
     if (!word.empty()) // Is leaf
     {
@@ -66,12 +77,9 @@ void TreeSearch::addWordToTree(const std::string &word,
         return;
     }
 
-    treeNode->addChildNode(l);
-
     std::shared_ptr<TreeNodeBase> childTreeNode;
-    if (treeNode->getNodeByLetter(l, childTreeNode)) {
-        addWordToTree(word, childTreeNode, letterIdx + 1);
-    }
+    treeNode->addChildNode(l, childTreeNode);
+    addWordToTree(word, childTreeNode, letterIdx + 1);
 }
 
 void TreeSearch::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase> &treeNode,
