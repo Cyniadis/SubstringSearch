@@ -2,6 +2,7 @@
 #include "ParamsDialog.h"
 #include "TreeNode.h"
 #include "TreeSearchParallel.h"
+#include "NaiveSearchParallel.h"
 #include "ui_MainWindow.h"
 
 #include <QFileDialog>
@@ -12,17 +13,33 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->searchLineEdit->setEnabled(false);
+
     _listModel = new QStringListModel();
     ui->listView->setModel(_listModel);
 
     _paramsDialog = new ParamsDialog();
+    _params = _paramsDialog->getParams();
 
-    _searchAlgo = std::make_unique<TreeSearchParallel>(4, std::make_shared<TreeNodeVectorCompact>(), false);
+    connect(_paramsDialog, &ParamsDialog::paramsDialogAccepted, this, &MainWindow::onParamDialogAccepted);
+
+    if( _params._searchMethod == "Naive") {
+        _searchAlgo = std::make_unique<NaiveSearchParallel>(_params._nbThreads, false);
+    }
+    else {
+        _searchAlgo = std::make_unique<TreeSearchParallel>(_params._nbThreads, std::make_shared<TreeNodeVectorCompact>(), false);
+
+    }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onParamDialogAccepted(ParamsDialog::Params &params)
+{
+    _params = params;
 }
 
 
@@ -41,7 +58,6 @@ void MainWindow::on_browseButton_clicked()
     {
         ui->fileLineEdit->setText(selectedFile);
     }
-
 }
 
 
@@ -50,11 +66,13 @@ void MainWindow::on_loadButton_clicked()
     if (_searchAlgo->loadWordList(ui->fileLineEdit->text().toStdString()) ) {
         ui->statusbar->showMessage("Loading successful !", 3000);
         ui->statusbar->setStyleSheet("color: rgb(0, 125, 0);");
+        ui->searchLineEdit->setEnabled(true);
     }
     else
     {
         ui->statusbar->showMessage("Loading failed !", 3000);
         ui->statusbar->setStyleSheet("color: rgb(125, 0, 0);");
+        ui->searchLineEdit->setEnabled(false);
     }
 }
 
@@ -68,7 +86,8 @@ void MainWindow::on_paramButton_clicked()
 void MainWindow::on_searchButton_clicked()
 {
     QString subStr = ui->searchLineEdit->text();
-    if( !subStr.isEmpty() ) {
+    if( !subStr.isEmpty() )
+    {
         unsigned long elapsed;
         std::vector<std::string> words = _searchAlgo->searchWordTimed(subStr.toStdString(), elapsed);
         ui->statusbar->showMessage( QString::number(words.size()) + " words found in " + QString::number(elapsed)  + "us", 3000);
@@ -80,5 +99,15 @@ void MainWindow::on_searchButton_clicked()
 
 
     }
+}
+
+
+void MainWindow::on_searchLineEdit_textChanged(const QString &arg1)
+{
+    if( !_params._incrementalSearch ) {
+        return;
+    }
+
+    on_searchButton_clicked();
 }
 

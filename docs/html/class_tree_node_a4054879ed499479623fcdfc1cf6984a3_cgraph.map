@@ -1,0 +1,6 @@
+<map id="TreeNode::visitPartialTree" name="TreeNode::visitPartialTree">
+<area shape="rect" id="Node000001" title="visitPartialTree : Perform a DFS and execute given function parts of the children defined by idxTh ov..." alt="" coords="5,29,174,56"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="53,30,47,21,51,11,66,5,90,3,115,5,129,12,126,16,114,10,89,8,67,10,55,15,52,20,57,27"/>
+<area shape="rect" id="Node000002" href="$class_tree_node.html#ae7eb0ee923b091de6c9ca4f49125baad" title="getPartialNextLetters : Return a start and end iterator corresponding to a range of the cildren conta..." alt="" coords="222,21,388,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,40,206,40,206,45,174,45"/>
+</map>

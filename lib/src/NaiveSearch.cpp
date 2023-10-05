@@ -49,3 +49,31 @@ bool NaiveSearch::startstWith(const std::string &word, const std::string &subStr
 {
     return (word.substr(0, subStr.size()) == subStr);
 }
+
+
+
+std::vector<std::string> NaiveSearch::incrementalSearchWords(const std::string &subStr, int idx, bool add)
+{
+    if( subStr.size() == 0) {
+        return std::vector<std::string>();
+    }
+
+    if( subStr.empty() ) {
+        _currentFoundWords = _wordList;
+    }
+
+    if( add )
+    {
+        if( idx == subStr.size() - 1 ) // add at the end
+        {
+            // All the new words are included in the current list
+            _currentFoundWords = searchWords(subStr, _currentFoundWords.begin(), _currentFoundWords.end());
+        }
+    }
+    else
+    { // 1st letter or add at the begginin or middle
+        return searchWords(subStr);
+    }
+    return std::vector<std::string>();
+
+}

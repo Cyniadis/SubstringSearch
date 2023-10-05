@@ -24,26 +24,6 @@ void NaiveSearchParallel::runSearchWordDirectInsert(const std::string& subStr, S
     }
 }
 
-
-std::vector<std::string> NaiveSearchParallel::searchWordsDirectInsert(const std::string& subStr)
-{
-    // All threads push word in the same vector
-
-    for( int i = 0; i < _nbThreads; ++i )
-    {
-        int step = (_wordList.size() / _nbThreads); //add check if step = 0;
-        StringVecConstIterator startIt = std::begin(_wordList) + i * step;
-        StringVecConstIterator endIt = (i == _nbThreads -1 ) ? _wordList.end() : (startIt + step);
-        
-        std::function<void(void)> func = std::bind(&NaiveSearchParallel::runSearchWordDirectInsert, this, subStr, startIt, endIt);
-        _threadPool.runThread(func);
-    }
-
-    _threadPool.jointAllThreads();
-    return _foundWords;
-}
-
-
 void NaiveSearchParallel::runSearchWordBatchedInsert(const std::string& subStr, StringVecConstIterator startIt, StringVecConstIterator endIt)
 {
     std::vector<std::string> vec = NaiveSearch::searchWords(subStr, startIt, endIt);
@@ -52,29 +32,30 @@ void NaiveSearchParallel::runSearchWordBatchedInsert(const std::string& subStr, 
     _mutex.unlock();
 }
 
-std::vector<std::string> NaiveSearchParallel::searchWordsBatchedInsert(const std::string& subStr)
-{
-    for( int i = 0; i < _nbThreads; ++i )
-    {
-        int step = (_wordList.size() / _nbThreads); //add check if step = 0;
-        StringVecConstIterator startIt = std::begin(_wordList) + (i * step);
-        StringVecConstIterator endIt = (i == _nbThreads -1 ) ? _wordList.end() : (startIt + step);
-
-        std::function<void(void)> func = std::bind(&NaiveSearchParallel::runSearchWordBatchedInsert, this, subStr, startIt, endIt);
-        _threadPool.runThread(func);
-    }
-    _threadPool.jointAllThreads();
-
-    return _foundWords;
-}
-
 
 std::vector<std::string> NaiveSearchParallel::searchWords(const std::string &subStr)
 {
-    if( _useDirectInsert ) {
-        return searchWordsDirectInsert(subStr);
+    if( _nbThreads <= 1 ) {
+        return NaiveSearch::searchWords(subStr);
     }
-    else {
-        return searchWordsBatchedInsert(subStr);
+
+    // All threads push word in the same vector
+    for( int i = 0; i < _nbThreads; ++i )
+    {
+        int step = (_wordList.size() / _nbThreads); //add check if step = 0;
+        StringVecConstIterator startIt = std::begin(_wordList) + i * step;
+        StringVecConstIterator endIt = (i == _nbThreads -1 ) ? _wordList.end() : (startIt + step);
+
+        std::function<void(void)> func;
+        if( _useDirectInsert ) {
+            func = std::bind(&NaiveSearchParallel::runSearchWordDirectInsert, this, subStr, startIt, endIt);
+        }
+        else {
+            func = std::bind(&NaiveSearchParallel::runSearchWordBatchedInsert, this, subStr, startIt, endIt);
+        }
+        _threadPool.runThread(func);
     }
+
+    _threadPool.joinAllThreads();
+    return _foundWords;
 }

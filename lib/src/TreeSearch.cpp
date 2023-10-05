@@ -4,7 +4,8 @@
 #include <limits.h>
 
 TreeSearch::TreeSearch(std::shared_ptr<TreeNodeBase> searchTree)
-    : _searchTree(searchTree)
+    : _searchTree(searchTree),
+    _lastPrefixTree(searchTree)
 {}
 
 bool TreeSearch::loadWordList(const std::string &wordListPath)
@@ -21,6 +22,39 @@ bool TreeSearch::loadWordList(const std::string &wordListPath)
     return true;
 }
 
+std::vector<std::string> TreeSearch::searchWords(const std::string &subStr, std::shared_ptr<TreeNodeBase>& treeNode)
+{
+    std::vector<std::string> foundWords;
+    saveAllSubtreeWords(treeNode, foundWords);
+    return foundWords;
+}
+
+std::vector<std::string> TreeSearch::incrementalSearchWords(const std::string &subStr, int idx, bool add)
+{
+    if( subStr.size() == 0) {
+        return std::vector<std::string>();
+    }
+
+    /*
+    if( add )
+    {
+        if( idx == subStr.size() - 1 ) // add at the end
+        {
+            // All the new words are included in the current list
+            _lastPrefixTree = _treeSearch->findPrefixSubTree(_lastPrefixTree, subStr, idx);
+            saveAllSubtreeWords(_lastPrefixTree, _currentWordList );
+        }
+        else
+        { // 1st letter or add at the begginin or middle
+            _lastPrefixTree = _treeSearch->findPrefixSubTree(_lastPrefixTree->getTreeRoot(), subStr, idx);
+        }
+    }
+    _wordList = _treeSearch->searchWords(subStr, _treeNode);
+    */
+    return searchWords(subStr);
+}
+
+
 std::vector<std::string> TreeSearch::searchWords(const std::string &subStr)
 {
     std::vector<std::string> foundWords;
@@ -30,8 +64,7 @@ std::vector<std::string> TreeSearch::searchWords(const std::string &subStr)
         return foundWords;
     }
 
-    saveAllSubtreeWords(startNode, foundWords);
-    return foundWords;
+    return searchWords(subStr, startNode);
 }
 
 std::shared_ptr<TreeNodeBase> TreeSearch::findPrefixSubTree(std::shared_ptr<TreeNodeBase> &treeNode,
@@ -57,6 +90,7 @@ std::shared_ptr<TreeNodeBase> TreeSearch::findPrefixSubTree(std::shared_ptr<Tree
     }
     return findPrefixSubTree(node, subStr, letterIdx + 1);
 }
+
 
 void TreeSearch::saveWord(std::shared_ptr<TreeNodeBase> &treeNode,
                           std::vector<std::string> &foundWords)

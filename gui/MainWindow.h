@@ -20,6 +20,8 @@ public:
     ~MainWindow();
 
 private slots:
+    void onParamDialogAccepted(ParamsDialog::Params& params);
+
     void on_browseButton_clicked();
 
     void on_loadButton_clicked();
@@ -28,13 +30,19 @@ private slots:
 
     void on_searchButton_clicked();
 
+    void on_searchLineEdit_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
 
     ParamsDialog *_paramsDialog;
+
     QStringListModel *_listModel;
 
     std::unique_ptr<SearchInterface> _searchAlgo;
+
+    ParamsDialog::Params _params;
+
 };
 #endif // MAINWINDOW_H
 

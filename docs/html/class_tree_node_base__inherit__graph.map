@@ -1,0 +1,17 @@
+<map id="TreeNodeBase" name="TreeNodeBase">
+<area shape="rect" id="Node000001" title="TreeNodeBase : Base interface for prefix tree search." alt="" coords="5,145,112,172"/>
+<area shape="rect" id="Node000002" href="$class_tree_node.html" title=" " alt="" coords="168,5,339,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,133,117,103,158,74,179,62,181,67,161,78,121,107,86,137"/>
+<area shape="rect" id="Node000004" href="$class_tree_node.html" title=" " alt="" coords="160,88,347,147"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="126,142,159,135,160,140,127,147"/>
+<area shape="rect" id="Node000006" href="$class_tree_node.html" title=" " alt="" coords="160,171,347,229"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="127,170,160,177,159,183,126,176"/>
+<area shape="rect" id="Node000008" href="$class_tree_node.html" title="TreeNode : Templated tree node class defining the children container." alt="" coords="162,253,345,280"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="85,181,119,211,161,239,189,250,187,255,158,244,116,216,81,185"/>
+<area shape="rect" id="Node000003" href="$class_tree_node_map.html" title="TreeNodeMap : tree node that use a unordered map to manage child nodes. Key is letter,..." alt="" coords="428,21,529,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="354,32,427,32,427,37,354,37"/>
+<area shape="rect" id="Node000005" href="$class_tree_node_vector.html" title="TreeNodeVector : tree node that use a preallocated vector to manage child nodes and use random access..." alt="" coords="421,104,535,131"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="363,115,420,115,420,120,363,120"/>
+<area shape="rect" id="Node000007" href="$class_tree_node_vector_compact.html" title="TreeNodeVectorCompact : tree node that use a vector to manage child nodes. Chidren are inserted when ..." alt="" coords="395,187,561,213"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="363,197,395,197,395,203,363,203"/>
+</map>

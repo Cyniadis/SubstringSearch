@@ -1,0 +1,5 @@
+<map id="ThreadPool::runThread" name="ThreadPool::runThread">
+<area shape="rect" id="Node000001" title="runThread : Run a thread executing the given function" alt="" coords="190,13,341,40"/>
+<area shape="rect" id="Node000002" href="$class_naive_search_parallel.html#aa6fa391330a56ce0430c5a2139aca37c" title="searchWords : Search all the words starting with given string" alt="" coords="5,5,142,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,29,142,29,142,24,174,24"/>
+</map>
