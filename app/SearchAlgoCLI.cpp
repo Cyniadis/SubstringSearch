@@ -3,8 +3,8 @@
 #include <iterator>
 #include <memory>
 
-#include "NaiveSearch.h"
 #include "NaiveSearchParallel.h"
+#include "TreeSearchParallel.h"
 
 // Function to display usage information
 void usage() {
@@ -14,7 +14,7 @@ void usage() {
                  "  -w, --word WORD      Word to search\n"
                  "  -j, --jobs NUM       Number of parallel threads\n"
                  "  -l, --wordlist FILE  Searchable word list\n"
-                 "  -a, --algo ALGORITHM Search algorithm. 'naive', 'naive_parallel'\n";
+                 "  -a, --algo ALGORITHM Search algorithm. 'naive', 'tree'\n";
 }
 
 int main(int argc, char *argv[])
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if( algo != "naive" && algo != "naive_parallel" ) {
+    if( algo != "naive" && algo != "tree" ) {
         std::cerr << "ERROR: Invalid algorithm\n";
     }
 
@@ -86,10 +86,11 @@ int main(int argc, char *argv[])
 
     // Instanciate algorithm
     if( algo == "naive" ) {
-        searchAlgo = std::make_unique<NaiveSearch>();
+        searchAlgo = std::make_unique<NaiveSearchParallel>(jobs, false);
     }
-    else if( algo == "naive_parallel" ) {
-        searchAlgo = std::make_unique<NaiveSearchParallel>(jobs, true);
+    else if( algo == "tree" ) {
+//        searchAlgo = std::make_unique<TreeSearchParallel>(jobs, std::make_unique<TreeNodeMap>(), false );
+        searchAlgo = std::make_unique<TreeSearch>( std::make_unique<TreeNodeMap>());
     }
 
     // Loading the word list
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
     }
 
     // Search words
-    std::vector<std::string> words = searchAlgo->searchWordTimed(word, elapsed);
+    std::vector<std::string> words = searchAlgo->searchWordTime(word, elapsed);
 
     // Output results
     std::copy(words.begin(), words.end(), std::ostream_iterator<std::string>(std::cout, "\n"));

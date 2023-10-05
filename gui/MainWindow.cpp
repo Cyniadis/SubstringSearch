@@ -39,7 +39,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::onParamDialogAccepted(ParamsDialog::Params &params)
 {
+
+    if ( _params._searchMethod != params._searchMethod )
+    {
+        if( _params._searchMethod == "Naive") {
+            _searchAlgo = std::make_unique<NaiveSearchParallel>(_params._nbThreads, false);
+        }
+        else {
+            _searchAlgo = std::make_unique<TreeSearchParallel>(_params._nbThreads, std::make_shared<TreeNodeVectorCompact>(), false);
+
+        }
+        ui->statusbar->showMessage("Reload required !", 5000);
+        ui->statusbar->setStyleSheet("color: rgb(125, 0, 125);");
+        ui->searchLineEdit->setEnabled(false);
+    }
+
     _params = params;
+
 }
 
 
@@ -89,7 +105,10 @@ void MainWindow::on_searchButton_clicked()
     if( !subStr.isEmpty() )
     {
         unsigned long elapsed;
-        std::vector<std::string> words = _searchAlgo->searchWordTimed(subStr.toStdString(), elapsed);
+        std::vector<std::string> words = _searchAlgo->searchWordTime(subStr.toStdString(), elapsed);
+        if( _params._sortResults) {
+            std::sort(words.begin(), words.end());
+        }
         ui->statusbar->showMessage( QString::number(words.size()) + " words found in " + QString::number(elapsed)  + "us", 3000);
         ui->statusbar->setStyleSheet("color: black");
 

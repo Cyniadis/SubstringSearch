@@ -1,8 +1,0 @@
-<map id="NaiveSearch::searchWords" name="NaiveSearch::searchWords">
-<area shape="rect" id="Node000001" title="searchWords : Search all the words starting with given string" alt="" coords="222,47,400,73"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="349,34,336,28,311,25,288,27,275,32,272,37,278,45,274,48,267,38,271,28,286,22,311,20,337,23,351,29"/>
-<area shape="rect" id="Node000002" href="$class_naive_search.html#a5f636cdd55ef00bc0971ab9608071a19" title="incrementalSearchWords : Perform incremental search" alt="" coords="5,5,174,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,47,174,42,175,37,207,42"/>
-<area shape="rect" id="Node000003" href="$class_naive_search_parallel.html#aa6fa391330a56ce0430c5a2139aca37c" title="searchWords : Search all the words starting with given string" alt="" coords="21,72,158,115"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="207,78,159,86,158,80,206,73"/>
-</map>
