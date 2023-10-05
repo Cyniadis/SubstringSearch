@@ -1,0 +1,5 @@
+<map id="TreeSearch::saveAllSubtreeWords" name="TreeSearch::saveAllSubtreeWords">
+<area shape="rect" id="Node000001" title="saveAllSubtreeWords : Recusively save all words to the given vector starting from the given tree node" alt="" coords="226,5,407,48"/>
+<area shape="rect" id="Node000002" href="$class_tree_search.html#a8edee9e943353f8f8757ca1521fce629" title="searchWords" alt="" coords="5,13,178,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,29,178,29,178,24,210,24"/>
+</map>

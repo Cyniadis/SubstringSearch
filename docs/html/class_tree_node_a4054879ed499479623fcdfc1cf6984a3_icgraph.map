@@ -1,0 +1,6 @@
+<map id="TreeNode::visitPartialTree" name="TreeNode::visitPartialTree">
+<area shape="rect" id="Node000001" title="visitPartialTree : Perform a DFS and execute given function parts of the children defined by idxTh ov..." alt="" coords="185,29,353,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="303,16,291,10,269,8,248,10,237,15,234,20,240,27,235,30,229,21,233,11,247,5,269,3,292,5,305,12"/>
+<area shape="rect" id="Node000002" href="$class_tree_node.html#a0c8be9cf9e6e27730566f22119d60309" title="visitTree : Perform a DFS and execute given function on all nodes" alt="" coords="5,29,137,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="169,45,137,45,137,40,169,40"/>
+</map>

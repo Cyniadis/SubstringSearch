@@ -24,11 +24,8 @@ include_directories(gui)
 file(GLOB SOURCES "lib/src/*.cpp")
 file(GLOB HEADERS "lib/include/*.h" "lib/include/*.hpp")
 add_library(SearchAlgoLib SHARED ${SOURCES} ${HEADERS})
-
-
 # Main apps
-add_executable(GenerateWordList "app/GenerateWordList.cpp"
-)
+add_executable(GenerateWordList "app/GenerateWordList.cpp")
 add_executable(SearchAlgoCLI "app/SearchAlgoCLI.cpp")
 target_link_libraries(SearchAlgoCLI SearchAlgoLib)
 

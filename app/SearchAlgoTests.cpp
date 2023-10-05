@@ -58,15 +58,15 @@ int main(int argc, char *argv[])
     // TREE SEARCH SINGLE THREAD
     runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (compact)",       nbRuns, std::make_shared<TreeNodeVectorCompact>());
     runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (random access)", nbRuns, std::make_shared<TreeNodeVector>());
-    runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (hash table)",    nbRuns, std::make_shared<TreeNodeHashTable>());
+    runTest<TreeSearch>(wordListPath, word, "TREE SEARCH SINGLE THREAD (hash table)",    nbRuns, std::make_shared<TreeNodeMap>());
 
     // TREE SEARCH MULTI THREAD
     runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (compact | direct insert)",       nbRuns, nbThreads, std::make_shared<TreeNodeVectorCompact>(), true);
     runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (random access | direct insert)", nbRuns, nbThreads, std::make_shared<TreeNodeVector>(), true);
-    runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (hash table | direct insert)",    nbRuns, nbThreads, std::make_shared<TreeNodeHashTable>(), true);
+    runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (hash table | direct insert)",    nbRuns, nbThreads, std::make_shared<TreeNodeMap>(), true);
 
     runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (compact | batched insert)",       nbRuns, nbThreads, std::make_shared<TreeNodeVectorCompact>(), false);
     runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (random access | batched insert)", nbRuns, nbThreads, std::make_shared<TreeNodeVector>(), false);
-    runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (hash table | batched insert)",    nbRuns, nbThreads, std::make_shared<TreeNodeHashTable>(), false);
+    runTest<TreeSearchParallel>(wordListPath, word, "TREE SEARCH MULTI THREADS (hash table | batched insert)",    nbRuns, nbThreads, std::make_shared<TreeNodeMap>(), false);
 
 }

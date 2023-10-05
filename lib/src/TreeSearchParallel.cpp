@@ -58,6 +58,16 @@ void TreeSearchParallel::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase>
         return;
     }
 
+    if( _nbThreads <= 1 ) {
+
+        if( _useDirectInsert ) {
+            runSearchDirectInsert(treeNode, 1, 1, foundWords);
+        }
+        else {
+            runSearchBatchedInsert(treeNode, 1, 1, foundWords);
+        }
+    }
+
     for( unsigned i = 0; i < _nbThreads; ++i )
     {
         std::function<void(void)> func;
@@ -70,7 +80,7 @@ void TreeSearchParallel::saveAllSubtreeWords(const std::shared_ptr<TreeNodeBase>
         }
         _threadPool.runThread(func);
     }
-    _threadPool.jointAllThreads();
+    _threadPool.joinAllThreads();
 }
 
 

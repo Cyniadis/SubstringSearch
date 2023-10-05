@@ -1,0 +1,11 @@
+<map id="SearchInterface" name="SearchInterface">
+<area shape="rect" id="Node000001" title="SearchInterface : Common interface for all search algorithms." alt="" coords="97,5,208,32"/>
+<area shape="rect" id="Node000002" href="$class_naive_search.html" title="NaiveSearch : Simplest single threaded search algorithm." alt="" coords="48,80,142,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,46,107,81,103,78,131,43"/>
+<area shape="rect" id="Node000004" href="$class_tree_search.html" title="TreeSearch : Perform search using a prefix tree." alt="" coords="177,80,264,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="176,42,210,78,207,81,173,45"/>
+<area shape="rect" id="Node000003" href="$class_naive_search_parallel.html" title="NaiveSearchParallel : Perform multi threaded naive search." alt="" coords="5,155,142,181"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,122,80,155,75,154,84,121"/>
+<area shape="rect" id="Node000005" href="$class_tree_search_parallel.html" title="TreeSearchParallel : Multithread prefix search." alt="" coords="166,155,296,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="227,122,232,154,226,155,222,122"/>
+</map>

@@ -1,24 +1,24 @@
 #include "TreeNode.h"
 
-TreeNodeHashTable::TreeNodeHashTable()
+TreeNodeMap::TreeNodeMap()
     : TreeNode()
 {}
 
-TreeNodeHashTable::TreeNodeHashTable(char letter) : TreeNode(letter) {}
+TreeNodeMap::TreeNodeMap(char letter) : TreeNode(letter) {}
 
-bool TreeNodeHashTable::getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase> &treeNode)
+bool TreeNodeMap::getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase> &treeNode)
 {
     treeNode = std::shared_ptr<TreeNodeBase>(_nextLetters[letter]);
     return true;
 }
 
-void TreeNodeHashTable::addChildNode(char letter, std::shared_ptr<TreeNodeBase> &childNode)
+void TreeNodeMap::addChildNode(char letter, std::shared_ptr<TreeNodeBase> &childNode)
 {
-    auto res = _nextLetters.insert({letter, std::make_shared<TreeNodeHashTable>(letter)});
+    auto res = _nextLetters.insert({letter, std::make_shared<TreeNodeMap>(letter)});
     childNode = res.first->second;
 }
 
-void TreeNodeHashTable::visitPartialTree(MapType::iterator start, MapType::iterator end, std::function<void (std::shared_ptr<TreeNodeBase> &)> &func)
+void TreeNodeMap::visitPartialTree(MapType::iterator start, MapType::iterator end, std::function<void (std::shared_ptr<TreeNodeBase> &)> &func)
 {
     for( auto it = start; it != end; ++it )
     {

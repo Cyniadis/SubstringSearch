@@ -4,7 +4,7 @@ ThreadPool::ThreadPool(unsigned nbThreads)
     : _idx(0)
 {
     unsigned maxThreads = std::thread::hardware_concurrency();
-    if (nbThreads == 0 || nbThreads > maxThreads) {
+    if ( nbThreads > maxThreads) {
         throw std::runtime_error("Maximum number of threads (" + std::to_string(maxThreads) + ") exceeded.");
     }
     else {
@@ -14,7 +14,7 @@ ThreadPool::ThreadPool(unsigned nbThreads)
 
 ThreadPool::~ThreadPool()
 {
-    jointAllThreads();
+    joinAllThreads();
 }
 
 int ThreadPool::runThread(std::function<void ()> func)
@@ -24,14 +24,14 @@ int ThreadPool::runThread(std::function<void ()> func)
         return -1;
     }
 
-    jointThread(_idx);
+    joinThread(_idx);
     _threadPool[_idx] = std::thread(func);
     _idx++;
 
     return _idx;
 }
 
-void ThreadPool::jointThread(int idx)
+void ThreadPool::joinThread(int idx)
 {
     if( isThreadValid(idx) && _threadPool[idx].joinable() ) {
         _threadPool[idx].join();
@@ -43,10 +43,10 @@ bool ThreadPool::isThreadValid(int idx)
     return (_threadPool[idx].get_id() != std::thread::id());
 }
 
-void ThreadPool::jointAllThreads()
+void ThreadPool::joinAllThreads()
 {
     for( unsigned i = 0; i < _threadPool.size(); ++i) {
-        jointThread(i);
+        joinThread(i);
     }
     _idx = 0;
 }
