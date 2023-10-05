@@ -32,7 +32,7 @@ public:
      * @param[out] elapsed : Execution time of searchWords function in microseconds
      * @return Vector of string with all the found words
      */
-    virtual std::vector<std::string> searchWordTimed(const std::string& subStr, unsigned long& elapsed)
+    virtual std::vector<std::string> searchWordTime(const std::string& subStr, unsigned long& elapsed)
     {
         using clock = std::chrono::high_resolution_clock;
 

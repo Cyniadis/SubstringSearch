@@ -8,7 +8,7 @@ TreeNodeMap::TreeNodeMap(char letter) : TreeNode(letter) {}
 
 bool TreeNodeMap::getNodeByLetter(char letter, std::shared_ptr<TreeNodeBase> &treeNode)
 {
-    treeNode = std::shared_ptr<TreeNodeBase>(_nextLetters[letter]);
+    treeNode = _nextLetters[letter];
     return true;
 }
 

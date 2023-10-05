@@ -73,7 +73,7 @@ std::shared_ptr<TreeNodeBase> TreeSearch::findPrefixSubTree(std::shared_ptr<Tree
 {
 
 
-    if ((letterIdx == subStr.size() - 1 )&& (treeNode != _searchTree)) {
+    if ((letterIdx == subStr.size() ) && (treeNode != _searchTree)) {
         return treeNode;
     }
 
@@ -84,10 +84,6 @@ std::shared_ptr<TreeNodeBase> TreeSearch::findPrefixSubTree(std::shared_ptr<Tree
         return treeNode;
     }
 
-    if( treeNode == _searchTree) // if root
-    {
-        return findPrefixSubTree(node, subStr, letterIdx);
-    }
     return findPrefixSubTree(node, subStr, letterIdx + 1);
 }
 
