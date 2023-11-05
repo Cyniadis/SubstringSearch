@@ -10,8 +10,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Doxygen Action 
+      - name: Doxygen 
         uses: mattnotmitt/doxygen-action@v1.9.5
         with:
             working-directory: './'
             doxyfile-path: 'docs/Doxyfile'
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html
