@@ -58,16 +58,17 @@ std::vector<std::string> NaiveSearch::incrementalSearchWords(const std::string &
         return std::vector<std::string>();
     }
 
-    if( subStr.empty() ) {
+    if( subStr.size() == 1 ) {
         _currentFoundWords = _wordList;
     }
 
     if( add )
     {
-        if( idx == subStr.size() - 1 ) // add at the end
+        //if( idx == subStr.size() - 1 ) // add at the end
         {
             // All the new words are included in the current list
             _currentFoundWords = searchWords(subStr, _currentFoundWords.begin(), _currentFoundWords.end());
+            return _currentFoundWords;
         }
     }
     else
