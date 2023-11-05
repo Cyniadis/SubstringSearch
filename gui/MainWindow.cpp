@@ -128,5 +128,23 @@ void MainWindow::on_searchLineEdit_textChanged(const QString &arg1)
     }
 
     on_searchButton_clicked();
+    /*
+    if( !arg1.isEmpty() )
+    {
+
+        bool addAtTheEnd = arg1.startsWith(_oldSubStr);
+        std::vector<std::string> words = _searchAlgo->incrementalSearchWords(arg1.toStdString(), arg1.size()-1, addAtTheEnd);
+        if( _params._sortResults) {
+            std::sort(words.begin(), words.end());
+        }
+        ui->statusbar->showMessage( QString::number(words.size()) + " words found", 3000);
+        ui->statusbar->setStyleSheet("color: black");
+
+        QStringList list;
+        std::transform(words.begin(), words.end(), std::back_inserter(list), [](const std::string &v){ return QString::fromStdString(v); });
+        _listModel->setStringList(list);
+    }
+    _oldSubStr = arg1;
+    */
 }
 
