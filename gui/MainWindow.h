@@ -43,6 +43,8 @@ private:
 
     ParamsDialog::Params _params;
 
+    QString _oldSubStr;
+
 };
 #endif // MAINWINDOW_H
 
