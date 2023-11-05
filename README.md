@@ -69,12 +69,12 @@ Type a search string in the text bar and click on "Search"
 
 Main window: 
 
-![image](https://github.com/Cyniadis/SubstringSearch/assets/48823027/e9ac2db3-eb03-4e4e-9f1b-99e941192e2b)
+![image](https://github.com/Cyniadis/SubstringSearch/assets/48823027/cca117a4-4410-45df-a46c-84ac748bd34b)
+
 
 Configuration window:
 
-![image](https://github.com/Cyniadis/SubstringSearch/assets/48823027/2192c15e-6981-4b8b-93a5-f49e60f93e78)
-
+![image](https://github.com/Cyniadis/SubstringSearch/assets/48823027/b687270c-d3af-4cc0-9f2a-790189e0d30f)
 
 
 ### Run the benchmark app
