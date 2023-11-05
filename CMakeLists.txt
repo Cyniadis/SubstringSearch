@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(VectorStudyCase)
+project(SubStringSearch)
 
 # Set the C++ standard to C++11 or later
 set(CMAKE_CXX_STANDARD 17)
