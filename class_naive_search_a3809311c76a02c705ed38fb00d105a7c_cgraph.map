@@ -1,0 +1,5 @@
+<map id="NaiveSearch::searchWords" name="NaiveSearch::searchWords">
+<area shape="rect" id="Node000001" title="searchWords : Look for all the words starting with given string in the list defined by the given iter..." alt="" coords="5,5,184,32"/>
+<area shape="rect" id="Node000002" href="$class_naive_search.html#af69407246995c28a6b34169ada30013b" title="startstWith : Check if the given word starts with the given sub string" alt="" coords="232,5,397,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,16,216,16,216,21,184,21"/>
+</map>

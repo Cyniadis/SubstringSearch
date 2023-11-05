@@ -1,0 +1,15 @@
+<map id="NaiveSearchParallel::searchWords" name="NaiveSearchParallel::searchWords">
+<area shape="rect" id="Node000001" title="searchWords : Search all the words starting with given string" alt="" coords="5,48,142,91"/>
+<area shape="rect" id="Node000002" href="$class_thread_pool.html#a1aff8fc21b41b0bb863231a3f6404b5d" title="joinAllThreads : Join all threads in the thread pool" alt="" coords="191,5,367,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,50,206,34,208,39,143,55"/>
+<area shape="rect" id="Node000005" href="$class_thread_pool.html#a42da1dcbeec158596fd1c3b86f8fb8c5" title="runThread : Run a thread executing the given function" alt="" coords="203,56,355,83"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="142,67,188,67,188,72,142,72"/>
+<area shape="rect" id="Node000006" href="$class_naive_search.html#acc8ebdd17974045cd86a29d494b555a3" title="searchWords : Search all the words starting with given string" alt="" coords="190,131,368,157"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="135,89,227,122,225,127,134,94"/>
+<area shape="rect" id="Node000003" href="$class_thread_pool.html#affc641fecae98589b77f0686244eb2e2" title="joinThread : Join thread at the given index" alt="" coords="416,31,569,57"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="367,26,401,30,400,36,366,32"/>
+<area shape="rect" id="Node000004" href="$class_thread_pool.html#a0819a893ddb66b181272bc9b6deff9c8" title="isThreadValid : Check if the thread at the given index has been runned" alt="" coords="617,31,790,57"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="570,41,602,41,602,47,570,47"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="354,58,400,52,401,58,355,63"/>
+<area shape="poly" id="edge7_Node000006_Node000006" title=" " alt="" coords="244,132,238,122,242,112,256,106,279,104,303,107,316,113,314,118,302,112,279,109,257,111,246,116,243,121,248,129"/>
+</map>
